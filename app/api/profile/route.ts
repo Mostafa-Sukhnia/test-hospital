@@ -9,14 +9,13 @@ import { verifyJwt } from "@/app/utils/security/jwt";
 export const GET = async (req: NextRequest) => {
   const authHeader = req.headers.get("Authorization");
   if (!authHeader || !authHeader.startsWith("Bearer ")) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    throw new Error("Unauthorized");
   }
-  const token = authHeader.split(" ")[1];
-  const decode: JwT = verifyJwt(token);
-  if (decode instanceof Error) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-  }
+  const decode: JwT = verifyJwt(authHeader);
 
+if (!decode.userId) {
+  throw new Error("Invalid token: missing userId");
+}
   const user = await prisma.user.findUnique({
     where: {
       id: Number(decode.userId),
