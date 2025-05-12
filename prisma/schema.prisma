@@ -23,6 +23,7 @@ model Appointment {
   date        DateTime
   patientId   Int
   notes       String?
+  status      Status   @default(Pending)
   patient     User     @relation(fields: [patientId], references: [id])
 }
 
@@ -30,3 +31,10 @@ enum Role {
   DOCTOR
   PATIENT
 }
+
+enum Status {
+  Pending
+  Confirmed
+  Cancelled
+}
+
